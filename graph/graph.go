@@ -3,6 +3,8 @@ package graph
 import (
 	"fmt"
 	"strconv"
+	"strings"
+	"errors"
 )
 
 type Edge struct {
@@ -59,4 +61,32 @@ func NewGraphFromString(fn []string) (*Graph, error) {
 	}
 	fmt.Println(s)
 	return NewGraph(s),nil
+}
+
+func (g *Graph)CalcDistance(route string) (int,error)  {
+	var dist int
+	var k string
+	var v Vertex
+	dails := strings.Split(route,"-")
+	l := len(dails)
+	if l < 2 {
+		err := errors.New("err Route!")
+		return 0,err
+	}
+
+	k = dails[0]
+	v = g.vertices[dails[0]]
+	for i:=1;i<l;i++ {
+		k = dails[i]
+		if val,ok := v.arcs[k];ok {
+			dist += val
+		}else {
+			err := errors.New("NO SUCH ROUTE")
+			return 0,err
+		}
+
+		v = g.vertices[k]
+	}
+
+	return dist,nil
 }
