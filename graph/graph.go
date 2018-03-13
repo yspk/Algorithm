@@ -3,8 +3,8 @@ package graph
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"strconv"
-	"strings"
 )
 
 type Edge struct {
@@ -14,10 +14,10 @@ type Edge struct {
 }
 
 type Vertex struct {
-	id    string
-	dist  int
+	id     string
+	dist   int
 	routes [][]string
-	arcs  map[string]int // arcs[vertex id] = weight
+	arcs   map[string]int // arcs[vertex id] = weight
 }
 
 type Graph struct {
@@ -60,21 +60,20 @@ func NewGraphFromString(fn []string) (*Graph, error) {
 		}
 
 	}
-	fmt.Println(s)
+	//fmt.Println(s)
 	return NewGraph(s), nil
 }
 
-func (g *Graph) CalcRouteDistance(route string) (int, error) {
+func (g *Graph) CalcRouteDistance(route []string) (int, error) {
 	var dist int
 	var s Vertex
-	dails := strings.Split(route, "-")
-	l := len(dails)
+	l := len(route)
 	if l < 2 {
 		err := errors.New("NO SUCH ROUTE")
 		return 0, err
 	}
 
-	for k, v := range dails {
+	for k, v := range route {
 		if k == 0 {
 			s = g.vertices[v]
 		} else {
@@ -92,19 +91,17 @@ func (g *Graph) CalcRouteDistance(route string) (int, error) {
 	return dist, nil
 }
 
-func (g *Graph) BFSTraverse(src, dest string, limit int,exact bool) int  {
-	var v,c Vertex
+func (g *Graph) BFSTraverse(src, dest string, limit int, exact bool) int {
+	var v, c Vertex
 	var count int
-
 	v = g.vertices[src]
 	h := make(Queue, len(v.arcs))
 	for id, _ := range v.arcs {
 		v = g.vertices[id]
-		//v.dist = y
-		g.vertices[id] = v
 		var route []string
-		route = append(route,src)
+		route = append(route, src)
 		v.routes = append(v.routes, route)
+		g.vertices[id] = v
 		h.Push(v)
 	}
 
@@ -113,38 +110,47 @@ func (g *Graph) BFSTraverse(src, dest string, limit int,exact bool) int  {
 		src = v.id
 		for w, _ := range v.arcs {
 			c = g.vertices[w]
-			var l int
-			//var rep bool
-			for _,s := range v.routes {
+			var pushed bool
+			for _, s := range v.routes {
 				var route []string
-				route = append(route,s...)
-				route = append(route,src)
-				l = len(route)
-				fmt.Println(append(route,w))
-				c.routes = append(c.routes,route)
+				var rep bool
+				route = append(route, s...)
+				route = append(route, src)
+				for _, m := range c.routes {
+					if reflect.DeepEqual(m, route) {
+						rep = true
+					}
+				}
+				if !rep {
+					c.routes = append(c.routes, route)
+					l := len(route)
+					if l < limit {
+						pushed = true
+					}
+					if w == dest {
+						if exact {
+							if len(route) == limit {
+								count++
+								//fmt.Println(append(route, w))
+							}
+						} else {
+							count++
+							//fmt.Println(append(route, w))
+						}
+					}
+				}
 			}
-
-			if l < limit {
+			g.vertices[w] = c
+			if pushed {
 				h.Push(c)
 			}
-			//if w == dest {
-			//	route := append(c.route,w)
-			//	fmt.Println(route)
-			//	if exact {
-			//		if len(route) == limit {
-			//			count ++
-			//		}
-			//	}else {
-			//		count ++
-			//	}
-			//}
 		}
 
 	}
 	return count
 }
 
-func (g *Graph) ShortestPath(src, dest string) (x int) {
+func (g *Graph) DifShortestPath(src, dest string) int {
 	g.visit(src)
 	v := g.vertices[src]
 	h := make(Queue, len(v.arcs))
@@ -181,4 +187,95 @@ func (g *Graph) ShortestPath(src, dest string) (x int) {
 	}
 	v = g.vertices[dest]
 	return v.dist
+}
+
+func (g *Graph) SameShortestPath(src string) int {
+	v := g.vertices[src]
+	var minimum int
+	var dists []int
+	for id, y := range v.arcs {
+		// update the vertices being pointed to with the distance.
+		if id == src {
+			minimum = y
+		}
+		dist := g.DifShortestPath(id, src)
+		//fmt.Println(id, src, dist)
+		dists = append(dists, y+dist)
+	}
+	l := len(dists)
+	if l == 0 {
+		//fmt.Println("NO SUCH ROUTE")
+	} else if l == 1 {
+		if minimum > dists[0] || minimum == 0 {
+			minimum = dists[0]
+		}
+	} else {
+		minimum = dists[0]
+		for _, v := range dists[1:] {
+			if v < minimum {
+				minimum = v
+			}
+		}
+	}
+	return minimum
+}
+
+func (g *Graph) BFSDistLimit(src, dest string, dist int) int {
+	var v, c Vertex
+	var count int
+	v = g.vertices[src]
+	h := make(Queue, len(v.arcs))
+	for id, _ := range v.arcs {
+		v = g.vertices[id]
+		var route []string
+		route = append(route, src)
+		v.routes = append(v.routes, route)
+		g.vertices[id] = v
+		h.Push(v)
+	}
+
+	for !h.IsEmpty() {
+		v = h.Pop()
+		src = v.id
+		for w, _ := range v.arcs {
+			c = g.vertices[w]
+			var pushed bool
+			for _, s := range v.routes {
+				var route []string
+				var rep bool
+				route = append(route, s...)
+				route = append(route, src)
+				for _, m := range c.routes {
+					if reflect.DeepEqual(m, route) {
+						rep = true
+					}
+				}
+				if !rep {
+					c.routes = append(c.routes, route)
+					//l := len(route)
+					//if l < limit {
+					//	pushed = true
+					//}
+					route = append(route, w)
+					d, _ := g.CalcRouteDistance(route)
+					if d < dist {
+						pushed = true
+					}
+					if w == dest {
+						d, _ := g.CalcRouteDistance(route)
+						if d < dist {
+							count++
+							//fmt.Println(route)
+						}
+					}
+				}
+			}
+			g.vertices[w] = c
+			if pushed {
+				h.Push(c)
+			}
+		}
+
+	}
+	return count
 }
