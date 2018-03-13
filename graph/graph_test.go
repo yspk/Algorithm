@@ -18,7 +18,13 @@ func TestGraph_NewGraphFromString(t *testing.T) {
 func TestGraph_CalcDistance(t *testing.T) {
 	data := []string{"AB5","BC4","CD8","DC8","DE6","AD5","CE2","EB3","AE7"}
 	if gra,err := NewGraphFromString(data);err == nil {
-		fmt.Println(gra.CalcDistance("A-E-D"))
+		fmt.Println(gra.CalcRouteDistance("A-B-C"))
 	}
 }
 
+func TestGraph_BFSTraverse(t *testing.T) {
+	data := []string{"AB5","BC4","CD8","DC8","DE6","AD5","CE2","EB3","AE7"}
+	if gra,err := NewGraphFromString(data);err == nil {
+		fmt.Println(gra.BFSTraverse("A","C",4,true))
+	}
+}
