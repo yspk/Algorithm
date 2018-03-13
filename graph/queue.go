@@ -1,6 +1,7 @@
 package graph
 
 type Queue []Vertex
+
 func (h Queue) Len() int           { return len(h) }
 func (h Queue) Less(i, j int) bool { return h[i].dist < h[j].dist }
 func (h Queue) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
@@ -14,7 +15,7 @@ func (h *Queue) Push(v Vertex) {
 	for i, w := range old {
 		if v.id == w.id {
 			if changed {
-				if i + 1 < len(updated) {
+				if i+1 < len(updated) {
 					updated = append(updated[:i], updated[i+1:]...)
 				} else {
 					updated = updated[:i]
@@ -27,7 +28,7 @@ func (h *Queue) Push(v Vertex) {
 			changed = true
 			updated = append(old[:i], v)
 			updated = append(updated, w)
-			updated = append(updated, old[i + 1:]...)
+			updated = append(updated, old[i+1:]...)
 		}
 	}
 	if !changed {
