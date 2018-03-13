@@ -8,7 +8,6 @@ import (
 )
 
 func main()  {
-	//Ask
 	input := flag.String("input","AB5,BC4,CD8,DC8,DE6,AD5,CE2,EB3,AE7","Please Input the Data")
 	data := strings.Split(*input,",")
 	//Data Format
@@ -26,7 +25,6 @@ func main()  {
 	} else {
 		fmt.Println("Output #1: ",dist)
 	}
-
 
 	// 2.	The distance of the route A-D.
 	route = strings.Split("A-D","-")
