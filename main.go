@@ -62,18 +62,20 @@ func main() {
 	fmt.Println("Output #6: ", gra.BFSTraverse("C", "C", 3, false))
 
 	// 7.	The number of trips starting at A and ending at C with exactly 4 stops.  In the sample data below, there are three such trips: A to C (via B,C,D); A to C (via D,C,D); and A to C (via D,E,B).
-	fmt.Println("Output #7: ", gra.BFSTraverse("A", "C", 4, true))
+	if gra1, err := graph.NewGraphFromString(data); err == nil {
+		fmt.Println("Output #7: ", gra1.BFSTraverse("A", "C", 4, true))
+	}
 
 	// 8.	The length of the shortest route (in terms of distance to travel) from A to C.
 	fmt.Println("Output #8: ", gra.DifShortestPath("A", "C"))
 
 	// 9.	The length of the shortest route (in terms of distance to travel) from B to B.
-	if gra1, err := graph.NewGraphFromString(data); err == nil {
-		fmt.Println("Output #9: ", gra1.SameShortestPath("B"))
+	if gra2, err := graph.NewGraphFromString(data); err == nil {
+		fmt.Println("Output #9: ", gra2.SameShortestPath("B"))
 	}
 
 	// 10.	The number of different routes from C to C with a distance of less than 30.  In the sample data, the trips are: CDC, CEBC, CEBCDC, CDCEBC, CDEBC, CEBCEBC, CEBCEBCEBC.
-	if gra2, err := graph.NewGraphFromString(data); err == nil {
-		fmt.Println("Output #10: ", gra2.BFSDistLimit("C", "C", 30))
+	if gra3, err := graph.NewGraphFromString(data); err == nil {
+		fmt.Println("Output #10: ", gra3.BFSDistLimit("C", "C", 30))
 	}
 }

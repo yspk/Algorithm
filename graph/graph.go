@@ -39,6 +39,7 @@ func NewGraph(vs map[string]Vertex) *Graph {
 func (g *Graph) Len() int       { return len(g.vertices) }
 func (g *Graph) visit(v string) { g.visited[v] = true }
 
+// initialize graph
 func NewGraphFromString(fn []string) (*Graph, error) {
 	s := make(map[string]Vertex)
 	for _, v := range fn {
@@ -100,7 +101,7 @@ func (g *Graph) BFSTraverse(src, dest string, limit int, exact bool) int {
 		v = g.vertices[id]
 		var route []string
 		route = append(route, src)
-		v.routes = append(v.routes, route)
+		v.routes = append(v.routes, route)  // record the route from src to id
 		g.vertices[id] = v
 		h.Push(v)
 	}
@@ -111,20 +112,20 @@ func (g *Graph) BFSTraverse(src, dest string, limit int, exact bool) int {
 		for w, _ := range v.arcs {
 			c = g.vertices[w]
 			var pushed bool
-			for _, s := range v.routes {
+			for _, s := range v.routes { // inherit father's routes
 				var route []string
 				var rep bool
 				route = append(route, s...)
 				route = append(route, src)
 				for _, m := range c.routes {
-					if reflect.DeepEqual(m, route) {
+					if reflect.DeepEqual(m, route) { // uniq when repeat
 						rep = true
 					}
 				}
 				if !rep {
 					c.routes = append(c.routes, route)
 					l := len(route)
-					if l < limit {
+					if l < limit { // if (node's l < limit) exist, continue push()
 						pushed = true
 					}
 					if w == dest {
@@ -151,7 +152,7 @@ func (g *Graph) BFSTraverse(src, dest string, limit int, exact bool) int {
 }
 
 func (g *Graph) DifShortestPath(src, dest string) int {
-	g.visit(src)
+	g.visit(src) // uniq by visit and visited
 	v := g.vertices[src]
 	h := make(Queue, len(v.arcs))
 	// initialize the heap with out edges from src
@@ -194,11 +195,10 @@ func (g *Graph) SameShortestPath(src string) int {
 	var minimum int
 	var dists []int
 	for id, y := range v.arcs {
-		// update the vertices being pointed to with the distance.
 		if id == src {
 			minimum = y
 		}
-		dist := g.DifShortestPath(id, src)
+		dist := g.DifShortestPath(id, src)  // SameSortestPath is depend on min of children's DifShortestPath
 		//fmt.Println(id, src, dist)
 		dists = append(dists, y+dist)
 	}
@@ -252,17 +252,12 @@ func (g *Graph) BFSDistLimit(src, dest string, dist int) int {
 				}
 				if !rep {
 					c.routes = append(c.routes, route)
-					//l := len(route)
-					//if l < limit {
-					//	pushed = true
-					//}
 					route = append(route, w)
 					d, _ := g.CalcRouteDistance(route)
-					if d < dist {
+					if d < dist {  // if (node's d < dist) exist, continue push()
 						pushed = true
 					}
 					if w == dest {
-						d, _ := g.CalcRouteDistance(route)
 						if d < dist {
 							count++
 							//fmt.Println(route)
