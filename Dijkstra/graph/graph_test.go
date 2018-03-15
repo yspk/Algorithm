@@ -25,7 +25,7 @@ func TestGraph_CalcDistance(t *testing.T) {
 func TestGraph_BFSTraverse(t *testing.T) {
 	data := []string{"AB5", "BC4", "CD8", "DC8", "DE6", "AD5", "CE2", "EB3", "AE7"}
 	if gra, err := NewGraphFromString(data); err == nil {
-		fmt.Println(gra.BFSTraverse("C", "C", 3, false))
+		fmt.Println(gra.BFSTraverse("C", "C", 100000000, false))
 	}
 }
 
