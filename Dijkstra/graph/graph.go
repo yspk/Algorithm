@@ -130,13 +130,13 @@ func (g *Graph) BFSTraverse(src, dest string, limit int, exact bool) int {
 					}
 					if w == dest {
 						if exact {
-							if len(route) == limit {
+							if l == limit {
 								count++
 								//fmt.Println(append(route, w))
 							}
 						} else {
 							count++
-							//fmt.Println(append(route, w))
+							//fmt.Println(l,":",append(route, w))
 						}
 					}
 				}
@@ -260,7 +260,7 @@ func (g *Graph) BFSDistLimit(src, dest string, dist int) int {
 					if w == dest {
 						if d < dist {
 							count++
-							//fmt.Println(route)
+							fmt.Println(len(route),":",d,route)
 						}
 					}
 				}
