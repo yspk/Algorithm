@@ -1,35 +1,30 @@
 package Matrix
 
 import (
-	"strconv"
 	"fmt"
+//	"strconv"
 )
-
-type Data struct {
-	Length int
-	Point  string
-}
 
 type Matrix struct {
 	rows, columns int       // the number of rows and columns.
-	data          []Data    // the contents of the matrix as one long slice.
+	data          []interface{}    // the contents of the matrix as one long slice.
 }
 
 func NewMatrix(r, c int) *Matrix {
 	return &Matrix{
 		r,
 		c,
-		make([]Data, r*c),
+		make([]interface{}, r*c),
 	}
 }
 
 // Set lets you define the value of a matrix at the given row and column.
-func (A *Matrix) Set(r, c int, val Data) {
+func (A *Matrix) Set(r, c int, val interface{}) {
 	A.data[findIndex(r, c, A)] = val
 }
 
 // Get retrieves the contents of the matrix at the row and column.
-func (A *Matrix) Get(r, c int) Data {
+func (A *Matrix) Get(r, c int) interface{} {
 	return A.data[findIndex(r, c, A)]
 }
 
@@ -39,19 +34,19 @@ func (A *Matrix) Print() {
 	// widths as strings, not ints, because we're going to use these in a printf
 	// function.
 	fmt.Printf("Begin:\n")
-	columnWidths := make([]string, A.columns)
-
-	for i := range columnWidths {
-		var maxLength int
-		thisColumn := A.Column(i + 1)
-		for j := range thisColumn {
-			thisLength := len(strconv.Itoa(thisColumn[j].Length))
-			if thisLength > maxLength {
-				maxLength = thisLength
-			}
-		}
-		columnWidths[i] = strconv.Itoa(maxLength)
-	}
+	//columnWidths := make([]string, A.columns)
+	//
+	//for i := range columnWidths {
+	//	var maxLength int
+	//	thisColumn := A.Column(i + 1)
+	//	for j := range thisColumn {
+	//		thisLength := len(strconv.Itoa(thisColumn[j]))
+	//		if thisLength > maxLength {
+	//			maxLength = thisLength
+	//		}
+	//	}
+	//	columnWidths[i] = strconv.Itoa(maxLength)
+	//}
 
 	// We have the widths, so now output each element with the correct column
 	// width so that they line up properly.
@@ -59,13 +54,14 @@ func (A *Matrix) Print() {
 		thisRow := A.Row(i + 1)
 		fmt.Printf("[")
 		for j := range thisRow {
-			var printFormat string
-			if j == 0 {
-				printFormat = "%" + columnWidths[j] + "s"
-			} else {
-				printFormat = " %" + columnWidths[j] + "s"
-			}
-			fmt.Printf(printFormat, strconv.Itoa(thisRow[j].Length))
+			//var printFormat string
+			//if j == 0 {
+			//	printFormat = "%" + columnWidths[j] + "v"
+			//} else {
+			//	printFormat = " %" + columnWidths[j] + "v"
+			//}
+			//fmt.Printf(printFormat, strconv.Itoa(thisRow[j]))
+			fmt.Printf("%v",thisRow[j])
 		}
 		fmt.Printf("]\n")
 	}
@@ -75,8 +71,8 @@ func (A *Matrix) Print() {
 // Column returns a slice that represents a column from the matrix.
 // This works by examining each row, and adding the nth element of
 // each to the column slice.
-func (A *Matrix) Column(n int) []Data {
-	col := make([]Data, A.rows)
+func (A *Matrix) Column(n int) []interface{} {
+	col := make([]interface{}, A.rows)
 	for i := 1; i <= A.rows; i++ {
 		col[i-1] = A.Row(i)[n-1]
 	}
@@ -85,7 +81,7 @@ func (A *Matrix) Column(n int) []Data {
 
 // Row returns a slice that represents a row from the matrix.
 
-func (A *Matrix) Row(n int) []Data {
+func (A *Matrix) Row(n int) []interface{} {
 	return A.data[findIndex(n, 1, A):findIndex(n, A.columns+1, A)]
 }
 
@@ -93,79 +89,79 @@ func (A *Matrix) Row(n int) []Data {
 // For each element of the result matrix, we get the dot product of the
 // corresponding row from matrix A and column from matrix B.
 
-func Multiply(A, B Matrix) *Matrix {
-	C := Zeros(A.rows, B.columns)
-	for r := 1; r <= C.rows; r++ {
-		A_row := A.Row(r)
-		for c := 1; c <= C.columns; c++ {
-			B_col := B.Column(c)
-			C.Set(r, c, Data{dotProduct(A_row, B_col),""} )
-		}
-	}
-	return &C
-}
-
-// Add adds two matrices together and returns the resulting matrix.  To do
-// this, we just add together the corresponding elements from each matrix.
-
-func Add(A, B Matrix) Matrix {
-	C := Zeros(A.rows, A.columns)
-	for r := 1; r <= A.rows; r++ {
-		for c := 1; c <= A.columns; c++ {
-			C.Set(r, c, Data{A.Get(r, c).Length+B.Get(r, c).Length,""})
-		}
-	}
-	return C
-}
-
-// Identity creates an identity matrix with n rows and n columns.  When you
-// multiply any matrix by its corresponding identity matrix, you get the
-// original matrix.  The identity matrix looks like a zero-filled matrix with
-// a diagonal line of one's starting at the upper left.
-
-func Identity(n int) Matrix {
-	A := Zeros(n, n)
-	for i := 0; i < len(A.data); i += (n + 1) {
-		A.data[i] = Data{1,""}
-	}
-	return A
-}
-
-// Zeros creates an r x c sized matrix that's filled with zeros.  The initial
-// state of an int is 0, so we don't have to do any initialization.
-
-func Zeros(r, c int) Matrix {
-	return Matrix{r, c, make([]Data, r*c)}
-}
-
-// New creates an r x c sized matrix that is filled with the provided data.
-// The matrix data is represented as one long slice.
-
-func New(r, c int, data []Data) Matrix {
-	if len(data) != r*c {
-		panic("[]int data provided to matrix.New is great than the provided capacity of the matrix!'")
-	}
-	A := Zeros(r, c)
-	A.data = data
-	return A
-}
-
+//func Multiply(A, B Matrix) *Matrix {
+//	C := Zeros(A.rows, B.columns)
+//	for r := 1; r <= C.rows; r++ {
+//		A_row := A.Row(r)
+//		for c := 1; c <= C.columns; c++ {
+//			B_col := B.Column(c)
+//			C.Set(r, c, Data{dotProduct(A_row, B_col),""} )
+//		}
+//	}
+//	return &C
+//}
+//
+//// Add adds two matrices together and returns the resulting matrix.  To do
+//// this, we just add together the corresponding elements from each matrix.
+//
+//func Add(A, B Matrix) Matrix {
+//	C := Zeros(A.rows, A.columns)
+//	for r := 1; r <= A.rows; r++ {
+//		for c := 1; c <= A.columns; c++ {
+//			C.Set(r, c, Data{A.Get(r, c).Length+B.Get(r, c).Length,""})
+//		}
+//	}
+//	return C
+//}
+//
+//// Identity creates an identity matrix with n rows and n columns.  When you
+//// multiply any matrix by its corresponding identity matrix, you get the
+//// original matrix.  The identity matrix looks like a zero-filled matrix with
+//// a diagonal line of one's starting at the upper left.
+//
+//func Identity(n int) Matrix {
+//	A := Zeros(n, n)
+//	for i := 0; i < len(A.data); i += (n + 1) {
+//		A.data[i] = Data{1,""}
+//	}
+//	return A
+//}
+//
+//// Zeros creates an r x c sized matrix that's filled with zeros.  The initial
+//// state of an int is 0, so we don't have to do any initialization.
+//
+//func Zeros(r, c int) Matrix {
+//	return Matrix{r, c, make([]Data, r*c)}
+//}
+//
+//// New creates an r x c sized matrix that is filled with the provided data.
+//// The matrix data is represented as one long slice.
+//
+//func New(r, c int, data []Data) Matrix {
+//	if len(data) != r*c {
+//		panic("[]int data provided to matrix.New is great than the provided capacity of the matrix!'")
+//	}
+//	A := Zeros(r, c)
+//	A.data = data
+//	return A
+//}
+//
 // findIndex takes a row and column and returns the corresponding index
 // from the underlying data slice.
 
 func findIndex(r, c int, A *Matrix) int {
 	return (r-1)*A.columns + (c - 1)
 }
-
-// dotProduct calculates the algebraic dot product of two slices.  This is just
-// the sum  of the products of corresponding elements in the slices.  We use
-// this when we multiply matrices together.
-
-func dotProduct(a, b []Data) int {
-	var total int
-	for i := 0; i < len(a); i++ {
-		total += a[i].Length * b[i].Length
-	}
-	return total
-}
-
+//
+//// dotProduct calculates the algebraic dot product of two slices.  This is just
+//// the sum  of the products of corresponding elements in the slices.  We use
+//// this when we multiply matrices together.
+//
+//func dotProduct(a, b []Data) int {
+//	var total int
+//	for i := 0; i < len(a); i++ {
+//		total += a[i].Length * b[i].Length
+//	}
+//	return total
+//}
+//
