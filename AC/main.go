@@ -3,9 +3,7 @@ package main
 import (
 	"./trie"
 	"./hashset"
-	"strconv"
 	"fmt"
-	"strings"
 )
 
 func main()  {
@@ -21,7 +19,7 @@ func main()  {
 	h := hashset.NewHashSet()
 	tr.SearchAC(s,h)
 
-	fmt.Printf("在主串%s中存在模式串的编号为:%v",s,strings.Join(h,","))
+	fmt.Printf("在主串%s中存在模式串的编号为:%v",s,h)
 }
 
 
