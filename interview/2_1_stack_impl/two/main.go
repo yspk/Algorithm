@@ -3,52 +3,57 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/isdamir/gotype"
 )
 
-type SliceStack struct {
-	arr       []int
-	stackSize int
+type LinkStack struct {
+	head *gotype.LNode
 }
 
-func (p *SliceStack) IsEmpty() bool {
-	return p.stackSize == 0
+func (p *LinkStack) IsEmpty() bool {
+	return p.head.Next == nil
 }
 
-func (p *SliceStack) Size() int {
-	return p.stackSize
+func (p *LinkStack) Size() int {
+	size := 0
+	node := p.head.Next
+	for node != nil {
+		node = node.Next
+		size++
+	}
+	return size
 }
 
-func (p *SliceStack) Top() int {
+func (p *LinkStack) Top() int {
 	if p.IsEmpty() {
 		panic(errors.New("stack is empty"))
 	}
-	return p.arr[p.stackSize-1]
+	return p.head.Next.Data.(int)
 }
 
-func (p *SliceStack) Pop() int {
-	if p.stackSize > 0 {
-		p.stackSize--
-		ret := p.arr[p.stackSize]
-		p.arr = p.arr[:p.stackSize]
-		return ret
+func (p *LinkStack) Pop() int {
+	tmp := p.head.Next
+	if tmp != nil {
+		p.head.Next = tmp.Next
+		return tmp.Data.(int)
 	}
 	panic(errors.New("stack is empty"))
 }
 
-func (p *SliceStack) Push(t int) {
-	p.arr = append(p.arr, t)
-	p.stackSize++
+func (p *LinkStack) Push(t int) {
+	node := &gotype.LNode{Data: t, Next: p.head.Next}
+	p.head.Next = node
 }
 
-func SliceMode() {
+func LinkMode() {
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Println("错误：", err)
 		}
 	}()
 
-	fmt.Println("Slice 构建栈结构")
-	sliceStack := &SliceStack{arr: make([]int, 0), stackSize: 0}
+	fmt.Println("链表构建栈结构")
+	sliceStack := &LinkStack{head: &gotype.LNode{}}
 	sliceStack.Push(1)
 	fmt.Println("栈顶元素为：", sliceStack.Top())
 	fmt.Println("栈大小为：", sliceStack.Size())
@@ -58,5 +63,5 @@ func SliceMode() {
 }
 
 func main() {
-	SliceMode()
+	LinkMode()
 }

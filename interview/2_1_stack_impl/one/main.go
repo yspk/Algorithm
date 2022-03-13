@@ -1,89 +1,62 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 )
 
-type LNode struct {
-	Data  int
-	Right *LNode
-	Down  *LNode
+type SliceStack struct {
+	arr       []int
+	stackSize int
 }
 
-func (p *LNode) Insert(headRef *LNode, data int) *LNode {
-	newNode := &LNode{Data: data, Down: headRef}
-	headRef = newNode
-	return headRef
+func (p *SliceStack) IsEmpty() bool {
+	return p.stackSize == 0
 }
 
-//创建链表
-func CreateNode() *LNode {
-	node := &LNode{}
-	node = node.Insert(nil, 31)
-	node = node.Insert(node, 8)
-	node = node.Insert(node, 6)
-	node = node.Insert(node, 3)
-
-	node.Right = node.Insert(node.Right, 21)
-	node.Right = node.Insert(node.Right, 11)
-
-	node.Right.Right = node.Insert(node.Right.Right, 50)
-	node.Right.Right = node.Insert(node.Right.Right, 22)
-	node.Right.Right = node.Insert(node.Right.Right, 15)
-
-	node.Right.Right.Right = node.Insert(node.Right.Right.Right, 55)
-	node.Right.Right.Right = node.Insert(node.Right.Right.Right, 40)
-	node.Right.Right.Right = node.Insert(node.Right.Right.Right, 39)
-	node.Right.Right.Right = node.Insert(node.Right.Right.Right, 30)
-
-	return node
+func (p *SliceStack) Size() int {
+	return p.stackSize
 }
 
-//合并有序链表
-func merge(a *LNode, b *LNode) *LNode {
-	if a == nil {
-		return b
+func (p *SliceStack) Top() int {
+	if p.IsEmpty() {
+		panic(errors.New("stack is empty"))
 	}
-	if b == nil {
-		return a
-	}
-	//把两个链表中较小的节点赋值给result
-	result := &LNode{}
-	if a.Data < b.Data {
-		result = a
-		result.Down = merge(a.Down, b)
-	} else {
-		result = b
-		result.Down = merge(a, b.Down)
-	}
-	return result
+	return p.arr[p.stackSize-1]
 }
 
-//把链表扁平化处理
-func Flatten(root *LNode) *LNode {
-	if root == nil || root.Right == nil {
-		return root
+func (p *SliceStack) Pop() int {
+	if p.stackSize > 0 {
+		p.stackSize--
+		ret := p.arr[p.stackSize]
+		p.arr = p.arr[:p.stackSize]
+		return ret
 	}
-	//递归处理root.Right链表
-	root.Right = Flatten(root.Right)
-	//把root节点对应的链表与右边的链表合并
-	root = merge(root, root.Right)
-	return root
+	panic(errors.New("stack is empty"))
 }
 
-func PrintNode(info string, node *LNode) {
-	fmt.Print(info)
-	tmp := node
-	for tmp != nil {
-		fmt.Print(tmp.Data, " ")
-		tmp = tmp.Down
-	}
-	fmt.Println()
+func (p *SliceStack) Push(t int) {
+	p.arr = append(p.arr, t)
+	p.stackSize++
+}
+
+func SliceMode() {
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println("错误：", err)
+		}
+	}()
+
+	fmt.Println("Slice 构建栈结构")
+	sliceStack := &SliceStack{arr: make([]int, 0), stackSize: 0}
+	sliceStack.Push(1)
+	fmt.Println("栈顶元素为：", sliceStack.Top())
+	fmt.Println("栈大小为：", sliceStack.Size())
+	sliceStack.Pop()
+	fmt.Println("弹栈成功：", sliceStack.Size())
+	sliceStack.Pop()
 }
 
 func main() {
-	fmt.Println("链表扁平化")
-	head := CreateNode()
-	head = Flatten(head)
-	PrintNode("扁平化后的链表：", head)
+	SliceMode()
 }
