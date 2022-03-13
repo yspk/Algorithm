@@ -3,58 +3,72 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/isdamir/gotype"
 )
 
-type SliceQueue struct {
-	arr   []int
-	front int
-	rear  int
+type LinkQueue struct {
+	head *gotype.LNode
+	end  *gotype.LNode
 }
 
-func (p *SliceQueue) IsEmpty() bool {
-	return p.front == p.rear
+func (p *LinkQueue) IsEmpty() bool {
+	return p.head == nil
 }
 
-func (p *SliceQueue) Size() int {
-	return p.rear - p.front
+func (p *LinkQueue) Size() int {
+	size := 0
+	node := p.head
+	for node != nil {
+		node = node.Next
+		size++
+	}
+	return size
 }
 
-func (p *SliceQueue) GetFront() int {
+func (p *LinkQueue) GetFront() int {
 	if !p.IsEmpty() {
-		return p.arr[p.front]
+		return p.head.Data.(int)
 	}
 	panic(errors.New("queue is empty"))
 }
 
-func (p *SliceQueue) GetBack() int {
+func (p *LinkQueue) GetBack() int {
 	if !p.IsEmpty() {
-		return p.arr[p.rear-1]
+		return p.end.Data.(int)
 	}
 	panic(errors.New("queue is empty"))
 }
 
-func (p *SliceQueue) DeQueue() {
+func (p *LinkQueue) DeQueue() {
 	if !p.IsEmpty() {
-		p.rear--
-		p.arr = p.arr[1:]
+		p.head = p.head.Next
+		if p.head == nil {
+			p.end = nil
+		}
 	}
 	panic(errors.New("queue is empty"))
 }
 
-func (p *SliceQueue) EnQueue(t int) {
-	p.arr = append(p.arr, t)
-	p.rear++
+func (p *LinkQueue) EnQueue(t int) {
+	node := &gotype.LNode{Data: t}
+	if p.IsEmpty() {
+		p.head = node
+		p.end = node
+	} else {
+		p.end.Next = node
+		p.end = node
+	}
 }
 
-func SliceMode() {
+func LinkMode() {
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Println("错误：", err)
 		}
 	}()
 
-	fmt.Println("Slice 构建队列结构")
-	sliceStack := &SliceQueue{arr: make([]int, 0)}
+	fmt.Println("链表构建队列结构")
+	sliceStack := &LinkQueue{}
 	sliceStack.EnQueue(1)
 	sliceStack.EnQueue(2)
 	fmt.Println("队列头元素为：", sliceStack.GetFront())
@@ -66,5 +80,5 @@ func SliceMode() {
 }
 
 func main() {
-	SliceMode()
+	LinkMode()
 }

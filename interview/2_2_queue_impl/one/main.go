@@ -5,39 +5,45 @@ import (
 	"fmt"
 )
 
-type SliceStack struct {
-	arr       []int
-	stackSize int
+type SliceQueue struct {
+	arr   []int
+	front int
+	rear  int
 }
 
-func (p *SliceStack) IsEmpty() bool {
-	return p.stackSize == 0
+func (p *SliceQueue) IsEmpty() bool {
+	return p.front == p.rear
 }
 
-func (p *SliceStack) Size() int {
-	return p.stackSize
+func (p *SliceQueue) Size() int {
+	return p.rear - p.front
 }
 
-func (p *SliceStack) Top() int {
-	if p.IsEmpty() {
-		panic(errors.New("stack is empty"))
+func (p *SliceQueue) GetFront() int {
+	if !p.IsEmpty() {
+		return p.arr[p.front]
 	}
-	return p.arr[p.stackSize-1]
+	panic(errors.New("queue is empty"))
 }
 
-func (p *SliceStack) Pop() int {
-	if p.stackSize > 0 {
-		p.stackSize--
-		ret := p.arr[p.stackSize]
-		p.arr = p.arr[:p.stackSize]
-		return ret
+func (p *SliceQueue) GetBack() int {
+	if !p.IsEmpty() {
+		return p.arr[p.rear-1]
 	}
-	panic(errors.New("stack is empty"))
+	panic(errors.New("queue is empty"))
 }
 
-func (p *SliceStack) Push(t int) {
+func (p *SliceQueue) DeQueue() {
+	if !p.IsEmpty() {
+		p.rear--
+		p.arr = p.arr[1:]
+	}
+	panic(errors.New("queue is empty"))
+}
+
+func (p *SliceQueue) EnQueue(t int) {
 	p.arr = append(p.arr, t)
-	p.stackSize++
+	p.rear++
 }
 
 func SliceMode() {
@@ -47,14 +53,16 @@ func SliceMode() {
 		}
 	}()
 
-	fmt.Println("Slice 构建栈结构")
-	sliceStack := &SliceStack{arr: make([]int, 0), stackSize: 0}
-	sliceStack.Push(1)
-	fmt.Println("栈顶元素为：", sliceStack.Top())
-	fmt.Println("栈大小为：", sliceStack.Size())
-	sliceStack.Pop()
-	fmt.Println("弹栈成功：", sliceStack.Size())
-	sliceStack.Pop()
+	fmt.Println("Slice 构建队列结构")
+	sliceStack := &SliceQueue{arr: make([]int, 0)}
+	sliceStack.EnQueue(1)
+	sliceStack.EnQueue(2)
+	fmt.Println("队列头元素为：", sliceStack.GetFront())
+	fmt.Println("队列尾元素为：", sliceStack.GetBack())
+	fmt.Println("队列大小为：", sliceStack.Size())
+	sliceStack.DeQueue()
+	fmt.Println("出列成功：", sliceStack.Size())
+	sliceStack.DeQueue()
 }
 
 func main() {

@@ -1,4 +1,4 @@
-module github.com/yspk51/Algorithm/interview/2_1_stack_impl/one
+module github.com/yspk51/Algorithm/interview/2_2_queue_impl/one
 
 go 1.17
 

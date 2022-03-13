@@ -1,70 +1,59 @@
 package main
 
 import (
-	"errors"
 	"fmt"
+	"github.com/isdamir/gotype"
 )
 
-type SliceQueue struct {
-	arr   []int
-	front int
-	rear  int
-}
-
-func (p *SliceQueue) IsEmpty() bool {
-	return p.front == p.rear
-}
-
-func (p *SliceQueue) Size() int {
-	return p.rear - p.front
-}
-
-func (p *SliceQueue) GetFront() int {
-	if !p.IsEmpty() {
-		return p.arr[p.front]
+func moveBottomToTop(s *gotype.SliceStack) {
+	if s.IsEmpty() {
+		return
 	}
-	panic(errors.New("queue is empty"))
-}
-
-func (p *SliceQueue) GetBack() int {
-	if !p.IsEmpty() {
-		return p.arr[p.rear-1]
+	top1 := s.Pop()
+	if !s.IsEmpty() {
+		moveBottomToTop(s)
+		top2 := s.Pop()
+		s.Push(top1)
+		s.Push(top2)
+	} else {
+		s.Push(top1)
 	}
-	panic(errors.New("queue is empty"))
 }
 
-func (p *SliceQueue) DeQueue() {
-	if !p.IsEmpty() {
-		p.rear--
-		p.arr = p.arr[1:]
+//翻转栈顺序
+func ReverseStack(s *gotype.SliceStack) {
+	if s.IsEmpty() {
+		return
 	}
-	panic(errors.New("queue is empty"))
+	//把栈底元素移到栈顶
+	moveBottomToTop(s)
+	top := s.Pop()
+	//递归处理子栈
+	ReverseStack(s)
+	s.Push(top)
 }
 
-func (p *SliceQueue) EnQueue(t int) {
-	p.arr = append(p.arr, t)
-	p.rear++
+//快速创建一个栈
+func CreateStack(list []int) *gotype.SliceStack {
+	stack := gotype.NewSliceStack()
+	for _, v := range list {
+		stack.Push(v)
+	}
+	return stack
 }
 
-func SliceMode() {
-	defer func() {
-		if err := recover(); err != nil {
-			fmt.Println("错误：", err)
-		}
-	}()
-
-	fmt.Println("Slice 构建队列结构")
-	sliceStack := &SliceQueue{arr: make([]int, 0)}
-	sliceStack.EnQueue(1)
-	sliceStack.EnQueue(2)
-	fmt.Println("队列头元素为：", sliceStack.GetFront())
-	fmt.Println("队列尾元素为：", sliceStack.GetBack())
-	fmt.Println("队列大小为：", sliceStack.Size())
-	sliceStack.DeQueue()
-	fmt.Println("出列成功：", sliceStack.Size())
-	sliceStack.DeQueue()
+func PrintStack(str string, s *gotype.SliceStack) {
+	fmt.Print(str)
+	for !s.IsEmpty() {
+		fmt.Print(s.Pop(), " ")
+	}
+	fmt.Println()
 }
 
 func main() {
-	SliceMode()
+	stack := CreateStack([]int{1, 2, 3, 4, 5, 6})
+	//PrintStack("创建的栈为：", stack) //出栈的方式打印
+	ReverseStack(stack)
+	fmt.Println(stack.Size())
+	PrintStack("翻转后的栈为：", stack)
 }
