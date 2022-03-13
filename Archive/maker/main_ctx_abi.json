@@ -1,0 +1,314 @@
+[
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "n",
+        "type": "uint64"
+      }
+    ],
+    "name": "bitCount",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint64"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "txId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getFinishTx",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "txId",
+        "type": "bytes32"
+      },
+      {
+        "name": "txHash",
+        "type": "bytes32"
+      },
+      {
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "name": "blockHash",
+        "type": "bytes32"
+      },
+      {
+        "name": "destinationId",
+        "type": "uint256"
+      },
+      {
+        "name": "remoteChainId",
+        "type": "uint256"
+      },
+      {
+        "name": "gasUsed",
+        "type": "uint256"
+      },
+      {
+        "name": "v",
+        "type": "uint256[]"
+      },
+      {
+        "name": "r",
+        "type": "bytes32[]"
+      },
+      {
+        "name": "s",
+        "type": "bytes32[]"
+      }
+    ],
+    "name": "makerFinish",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "txId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getMakerTx",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "value",
+        "type": "uint256"
+      },
+      {
+        "name": "txId",
+        "type": "bytes32"
+      },
+      {
+        "name": "txHash",
+        "type": "bytes32"
+      },
+      {
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "name": "blockHash",
+        "type": "bytes32"
+      },
+      {
+        "name": "destinationValue",
+        "type": "uint256"
+      },
+      {
+        "name": "remoteChainId",
+        "type": "uint256"
+      },
+      {
+        "name": "v",
+        "type": "uint256[]"
+      },
+      {
+        "name": "r",
+        "type": "bytes32[]"
+      },
+      {
+        "name": "s",
+        "type": "bytes32[]"
+      }
+    ],
+    "name": "taker",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "txId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getTakerTx",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "remoteChainId",
+        "type": "uint256"
+      },
+      {
+        "name": "destValue",
+        "type": "uint256"
+      }
+    ],
+    "name": "makerStart",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "crossChains",
+    "outputs": [
+      {
+        "name": "remoteChainId",
+        "type": "uint256"
+      },
+      {
+        "name": "signConfirmCount",
+        "type": "uint8"
+      },
+      {
+        "name": "anchorsPositionBit",
+        "type": "uint64"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "txId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "remoteChainId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "value",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "destValue",
+        "type": "uint256"
+      }
+    ],
+    "name": "MakerTx",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "txId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "name": "to",
+        "type": "address"
+      }
+    ],
+    "name": "MakerFinish",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "txId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "remoteChainId",
+        "type": "uint256"
+      }
+    ],
+    "name": "TakerTx",
+    "type": "event"
+  }
+]
