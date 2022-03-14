@@ -1,4 +1,4 @@
-module github.com/yspk51/Algorithm/interview/3_8_common_father_tree/two
+module github.com/yspk51/Algorithm/interview/2_2_queue_impl/one
 
 go 1.17
 

@@ -1,4 +1,4 @@
-module github.com/yspk51/Algorithm/interview/3_8_common_father_tree/two
+module github.com/yspk51/Algorithm/interview/3_8_common_father_tree/three
 
 go 1.17
 
