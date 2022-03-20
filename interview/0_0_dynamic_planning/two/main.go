@@ -2,47 +2,33 @@ package main
 
 import (
 	"fmt"
-	"math"
 )
 
-//三种硬盘：分别面值2元、5元、7元，每种硬盘都有足够多
-//买一本书需要27元
-//如何用最少的硬币组合付款
+//给定m行n列的网格，有一个机器人从左上角（0，0）出发，没补可以向下或者向右走一步
+//问有多少种不同的方式走到右下角
 
-func MinCoinToPay(arr []int,value int) int {
-	if value == 0 || len(arr) != 3 {
-		return 0
+func CountPath(m,n int) int {
+	if m == 0 || n == 0 {
+		return -1
 	}
-	minValue := make(map[int]int)
-	for i := -7; i < 0; i ++ {
-		minValue[i] = math.MaxInt
+	minValue := make(map[[2]int]int)
+	for i := 0; i < m; i ++ {
+		minValue[[2]int{i,0}] = 1
 	}
-	minValue[0] = 0
+	for j := 0; j<n; j++ {
+		minValue[[2]int{0,j}] = 1
+	}
 
-	for i:=1;i<= value;i++ {
-		tmp := math.MaxInt
-		if minValue[i-arr[0]] <= tmp {
-			tmp = minValue[i-arr[0]]
+	//f(x,y) = f(x-1,y) + f(x,y-1)
+	for i:=1;i<m;i++ {
+		for j:=1;j<n;j++ {
+			minValue[[2]int{i,j}] = minValue[[2]int{i-1,j}] + minValue[[2]int{i,j-1}]
 		}
-		if minValue[i-arr[1]] <= tmp {
-			tmp = minValue[i-arr[1]]
-		}
-		if minValue[i-arr[2]] <= tmp {
-			tmp = minValue[i-arr[2]]
-		}
-		if tmp != math.MaxInt {
-			minValue[i] = tmp + 1
-		} else {
-			minValue[i] = math.MaxInt
-		}
+	}
 
-	}
-	if minValue[value] != math.MaxInt {
-		return minValue[value]
-	}
-	return 0
+	return minValue[[2]int{m-1,n-1}]
 }
 
 func main() {
-	fmt.Println(MinCoinToPay([]int{2,5,7},27))
+	fmt.Println(CountPath(3,1))
 }

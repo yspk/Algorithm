@@ -4,31 +4,34 @@ import (
 	"fmt"
 )
 
-//给定m行n列的网格，有一个机器人从左上角（0，0）出发，没补可以向下或者向右走一步
-//问有多少种不同的方式走到右下角
+// • 有n块石头分别在x轴的0, 1, …, n-1位置
+// • 一只青蛙在石头0，想跳到石头n-1
+// • 如果青蛙在第i块石头上，它最多可以向右跳距离ai
+// • 问青蛙能否跳到石头n-1
 
-func CountPath(m,n int) int {
-	if m == 0 || n == 0 {
-		return -1
+func CanJump(a []int) bool {
+	length := len(a)
+	if length == 0 {
+		return false
 	}
-	minValue := make(map[[2]int]int)
-	for i := 0; i < m; i ++ {
-		minValue[[2]int{i,0}] = 1
-	}
-	for j := 0; j<n; j++ {
-		minValue[[2]int{0,j}] = 1
-	}
+	f := make([]bool,length)
+	f[0] = true
 
-	//f(x,y) = f(x-1,y) + f(x,y-1)
-	for i:=1;i<m;i++ {
-		for j:=1;j<n;j++ {
-			minValue[[2]int{i,j}] = minValue[[2]int{i-1,j}] + minValue[[2]int{i,j-1}]
+	//f(j) = f(i) && (j-i < a[i]) || f(k) && (j-i <= a[i]) ;0 =< k < j
+	for j:=1;j<length;j++ {
+		f[j] = false
+		for i:=0; i < j; i ++ {
+			if f[i] && j-i <= a[i] {
+				f[j] = true
+				break
+			}
 		}
 	}
 
-	return minValue[[2]int{m-1,n-1}]
+	return f[length-1]
 }
 
 func main() {
-	fmt.Println(CountPath(3,1))
+	fmt.Println(CanJump([]int{2, 3, 1, 1, 4}))
+	fmt.Println(CanJump([]int{3, 2, 1, 0, 4}))
 }

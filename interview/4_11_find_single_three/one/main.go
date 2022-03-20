@@ -2,87 +2,46 @@ package main
 
 import (
 	"fmt"
-	"math"
+	"github.com/isdamir/gotype"
 )
 
-func minDynDistance(a,b,c []int) int {
-	aLen := len(a)
-	bLen := len(b)
-	cLen := len(c)
-	minDis := math.MaxInt
-	i := 0 	//数组a的下标
-	j := 0	//数组b的下标
-	k := 0	//数组c的下标
-	for true {
-		curDist := Max3(Abs(a[i]-b[j]),Abs(a[i]-c[k]),Abs(b[j]-c[k]))
-		if curDist < minDis {
-			minDis = curDist
-		}
-		//找出当前遍历到三个数组中的最小值
-		min := Min3(a[i],b[j],c[k])
-		if min == a[i] {
-			i ++
-			if i>=aLen {
-				break
-			}
-		} else if min == b[j] {
-			j ++
-			if j >= bLen {
-				break
-			}
-		} else {
-			k ++
-			if k >= cLen {
-				break
+func findSingle(arr []int) int {
+	len := len(arr)
+	for i:=0;i<32;i++ {
+		count1 := 0
+		count0 := 0
+		result1 := 0
+		result0 := 0
+		for j:=0;j<len;j++ {
+			//判断数字n的二进制数从右往左数第i位是否为1
+			if gotype.IsOne(arr[j],i) {
+				//第i位为1的值异或操作
+				result1 ^= arr[j]
+				//第i位为1的数字个数
+				count1 ++
+			} else {
+				//第i位为1的值异或操作
+				result0 ^= arr[j]
+				//第i位为1的数字个数
+				count0 ++
 			}
 		}
+		//bit值为1的子数组元素个数为奇数，且出现1次的数字被分配到bit值为0
+		//的子数组说明只有一个出现1次的数字被分配到bit值为1的子数组中
+		//异或结果就是这个出现一次的数字
+		if count1%2 == 1 && result0 != 0 {
+			return result1
+		}
+		if count0%2 == 1 && result1 != 0 {
+			return result0
+		}
 
 	}
-	return minDis
-}
+	return -1
 
-func Min3(i int, i2 int, i3 int) int {
-	tmp := i
-	if i2 < tmp {
-		tmp = i2
-	}
-	if i3 < tmp {
-		tmp = i3
-	}
-	return tmp
-}
-
-func Max3(abs int, abs2 int, abs3 int) int {
-	tmp := abs
-	if abs2 > tmp {
-		tmp = abs2
-	}
-	if abs3 > tmp {
-		tmp = abs3
-	}
-	return tmp
-}
-
-func Abs(i int) int {
-	if i < 0 {
-		return -i
-	} else {
-		return i
-	}
-}
-
-func min(dis int, i int) int {
-	if dis > i {
-		return i
-	} else {
-		return dis
-	}
 }
 
 func main() {
-	a := []int{3,4,5,7,15}
-	b := []int{10,12,14,16,17}
-	c := []int{20,21,23,24,30,37}
-	fmt.Println("最小距离法")
-	fmt.Println(minDynDistance(a,b,c))
+	a := []int{6,3,4,5,9,4,3}
+	fmt.Println(findSingle(a))
 }

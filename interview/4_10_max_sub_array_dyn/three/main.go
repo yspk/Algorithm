@@ -2,27 +2,32 @@ package main
 
 import (
 	"fmt"
+	"math"
 )
 
-func maxSubArrayDyn(arr []int) int {
+func maxSubArrayEx(arr []int) (maxSum,begin,end int){
 	if arr == nil || len(arr) <+ 0 {
-		return -1
+		return -1,-1,-1
 	}
-	n := len(arr)
-	//End := make([]int,n) //包含arr[n-1]的最大子数组和
-	//All := make([]int,n) //最大子数组和
-	//End[n-1] = arr[n-1]
-	//All[n-1] = arr[n-1]
-	//包含arr[n-1]的最大子数组和
-	nEnd := arr[0]
-	//最大子数组和
-	nAll := arr[0]
-	// All[i-1] = max(End[i-1],arr[i-1],All[i-2])
-	for i:=1;i<n;i++ {
-		nEnd = Max(nEnd+arr[i],arr[i])
-		nAll = Max(nEnd,nAll)
+	//子数组最大值
+	maxSum = math.MinInt
+	//包含最后一位的最大子数组和
+	nSum := 0
+	nStart := 0
+	for i,v := range arr {
+		if nSum < 0 {
+			nSum = v
+			nStart = i //如果某个值使得nSum < 0,那么要从arr[i]重新开始求和
+		} else {
+			nSum += v
+		}
+		if nSum > maxSum {
+			maxSum = nSum
+			begin = nStart
+			end = i
+		}
 	}
-	return nAll
+	return
 }
 
 func Max(abs int, abs2 int) int {
@@ -34,6 +39,6 @@ func Max(abs int, abs2 int) int {
 
 func main() {
 	a := []int{1,-2,4,8,-4,7,-1,-5}
-	fmt.Println("优化存储复杂度的动态规划法")
-	fmt.Println(maxSubArrayDyn(a))
+	fmt.Println("拓展题")
+	fmt.Println(maxSubArrayEx(a))
 }

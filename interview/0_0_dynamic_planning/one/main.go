@@ -2,53 +2,56 @@ package main
 
 import (
 	"fmt"
-	"github.com/isdamir/gotype"
 )
 
-//判断单链表是否有环
-func IsLoop(head *gotype.LNode) *gotype.LNode {
-	if head == nil && head.Next == nil {
-		return head
-	}
-	slow := head.Next
-	fast := head.Next
-	for fast != nil && fast.Next != nil {
-		slow = slow.Next
-		fast = fast.Next.Next
-		if slow == fast {
-			return slow
-		}
-	}
-	return nil
-}
+//三种硬币：分别面值2元、5元、7元，每种硬盘都有足够多
+//买一本书需要27元
+//如何用最少的硬币组合付款
 
-func FindLoopNode(head *gotype.LNode, meetNode *gotype.LNode) *gotype.LNode {
-	first := head.Next
-	second := meetNode
-	for first != second {
-		first = first.Next
-		second = second.Next
+func MinCoinToPay(coins []int, amount int) int {
+	if amount == 0 || len(coins) == 0 {
+		return -1
 	}
-	return first
+	minValue := make(map[int]int)
+	//for i := 0 - coins[len(coins) -1]; i < 0; i ++ {
+	//	minValue[i] = 1000000
+	//}
+	minValue[0] = 0
+
+	//f(x) = min(f(x-arr[0])+1,f(x-arr[1])+1,f(x-arr[2])+1)
+	for i:=1;i<= amount;i++ {
+		tmp := 1000000
+		for j:=0;j<len(coins);j ++ {
+			if i - coins[j] < 0 {
+				minValue[i-coins[j]] = 1000000
+			}
+			if coins[j] !=0 && minValue[i-coins[j]] <= tmp {
+				tmp = minValue[i-coins[j]]
+			}
+		}
+
+		//if minValue[i-coins[1]] <= tmp {
+		//	tmp = minValue[i-coins[1]]
+		//}
+		//if minValue[i-coins[2]] <= tmp {
+		//	tmp = minValue[i-coins[2]]
+		//}
+		if tmp != 1000000 {
+			minValue[i] = tmp + 1
+		} else {
+			minValue[i] = 1000000
+		}
+
+	}
+	if minValue[amount] != 1000000 {
+		return minValue[amount]
+	}
+	return -1
 }
 
 func main() {
-	fmt.Println("查找环")
-	head := &gotype.LNode{}
-	gotype.CreateNode(head, 8)
-	//构造环
-	loop := head.Next
-	for loop.Next != nil {
-		loop = loop.Next
-	}
-	loop.Next = head.Next.Next.Next
-
-	meetNode := IsLoop(head)
-	if meetNode != nil {
-		fmt.Println("有环")
-		loopNode := FindLoopNode(head, meetNode)
-		fmt.Println("环的入口节点为：", loopNode.Data)
-	} else {
-		fmt.Println("无环")
-	}
+	fmt.Println(MinCoinToPay([]int{2,5,7},27))
+	fmt.Println(MinCoinToPay([]int{1,2,5},11))
+	fmt.Println(MinCoinToPay([]int{0,1,1,1,8},9))
+	fmt.Println(MinCoinToPay([]int{21,31,51},91))
 }

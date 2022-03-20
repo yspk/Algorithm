@@ -1,5 +1,3 @@
-module github.com/yspk51/Algorithm/interview/1_6_link_cycle_check/one
+module github.com/yspk/Algorithm/interview/0_0_dynamic_planning/three
 
 go 1.17
-
-require github.com/isdamir/gotype v0.0.0-20200101084212-6aa1591106b2

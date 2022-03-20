@@ -2,46 +2,53 @@ package main
 
 import (
 	"fmt"
-	"github.com/isdamir/gotype"
 )
 
-func findSingle(arr []int) int {
-	len := len(arr)
-	for i:=0;i<32;i++ {
-		count1 := 0
-		count0 := 0
-		result1 := 0
-		result0 := 0
-		for j:=0;j<len;j++ {
-			//判断数字n的二进制数从右往左数第i位是否为1
-			if gotype.IsOne(arr[j],i) {
-				//第i位为1的值异或操作
-				result1 ^= arr[j]
-				//第i位为1的数字个数
-				count1 ++
-			} else {
-				//第i位为1的值异或操作
-				result0 ^= arr[j]
-				//第i位为1的数字个数
-				count0 ++
-			}
+var pos = 0
+//以arr[low]为基准把数组分成两部分
+func partition(arr []int,low,high int)  {
+	key := arr[low]
+	for low < high {
+		for low < high && arr[high] > key {
+			high --
 		}
-		//bit值为1的子数组元素个数为奇数，且出现1次的数字被分配到bit值为0
-		//的子数组说明只有一个出现1次的数字被分配到bit值为1的子数组中
-		//异或结果就是这个出现一次的数字
-		if count1%2 == 1 && result0 != 0 {
-			return result1
+		arr[low] = arr[high]
+		for low < high && arr[low] < key {
+			low ++
 		}
-		if count0%2 == 1 && result1 != 0 {
-			return result0
-		}
-
+		arr[high] = arr[low]
 	}
-	return -1
+	arr[low] = key
+	pos = low
+}
+
+
+func getMid(arr []int) int {
+	low := 0
+	n := len(arr)
+	high := n-1
+	mid := (low + high)/2
+	for true {
+		//以arr[low]为基准把数组分成两部分
+		partition(arr,low,high)
+		if pos == mid { //找到中位数
+			break
+		} else if pos > mid { //继续在右半部分查找
+			high = pos -1
+		} else {//继续在左半部分查找
+			low = pos + 1
+		}
+	}
+	//如果数组长度是奇数，中位数为中间的元素，否则就是中间两个数的平均值
+	if n%2 != 0 {
+		return arr[mid]
+	} else {
+		return (arr[mid] + arr[mid+1])/2
+	}
 
 }
 
 func main() {
-	a := []int{6,3,4,5,9,4,3}
-	fmt.Println(findSingle(a))
+	a := []int{7,5,3,1,11,9}
+	fmt.Println(getMid(a))
 }
